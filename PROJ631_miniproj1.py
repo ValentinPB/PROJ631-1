@@ -228,34 +228,51 @@ class System :
             for j in range(len(nodesreft2temp)) :
                 if i.id == nodesreft2temp[j].id :
                     times2.append(times2temp[j])
+        #print(times1, times2)
         AVGtimes = []
         difftimes = []
         for i in range(len(times1)) :
             AVGtimes.append((times1[i] + times2[i])/2)      #calcul des temps moyens
             difftimes.append(abs(times1[i] - times2[i]))    #calcul des différences absolues
+        #print(AVGtimes, difftimes)
+        # #===========AFFICHAGE DEBUG DES NOEUDS===============
+        # nodeids = []
+        # for i in nodesreft :
+        #     nodeids.append(i.id)
+        # print(nodeids)
+        # #====================================================
         while AVGtimes != [] :          #boucle principale
             AVGmin = min(AVGtimes)
             AVGminInd = []
+            #print('AVGmin', AVGmin)
             for i in range(len(AVGtimes)) :     #récupération des IDs des temps minimums
                 if AVGtimes[i] == AVGmin :
                     AVGminInd.append(i)
+            #print('index', AVGminInd)
             currentnodes = []
             currentdiffs = []
             for i in range(len(AVGminInd) - 1, -1, -1) :
-                #print(AVGtimes, AVGminInd, i)
+                #print(AVGminInd[i], nodesreft[i])
                 AVGtimes.pop(AVGminInd[i])          #suppression des temps minimums
-                currentnodes.append(nodesreft[i])       #récupération des noeuds en traitement
-                currentdiffs.append(difftimes[i])       #récupération des différences concernées
+                currentnodes.append(nodesreft[AVGminInd[i]])       #récupération des noeuds en traitement
+                currentdiffs.append(difftimes[AVGminInd[i]])       #récupération des différences concernées
                 difftimes.pop(i)
+            # #===========AFFICHAGE DEBUG DES NOEUDS===============
+            # nodeids = []
+            # for i in currentnodes :
+            #     nodeids.append(i.id)
+            # print(nodeids)
+            # #====================================================
             while currentdiffs != [] and dataToPlace != [] :
                 for i in range(len(currentdiffs)) :
-                    if currentdiffs[i] == max(currentdiffs) :
+                    if currentdiffs[i] == min(currentdiffs) :
                         placeInd = i
                 currentdiffs.pop(placeInd)
+                #print(currentnodes[placeInd].id)
                 if currentnodes[placeInd].availableMemSize() > dataToPlace[0].size :
                     dataPlaced = dataToPlace.pop(0)
                     scotchuser = User(100, [dataPlaced], currentnodes[placeInd].id)
-                    self.placedataworksonce
+                    self.placedataworksonce(scotchuser)
                 currentnodes.pop(placeInd)
 
 
