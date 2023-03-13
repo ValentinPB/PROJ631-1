@@ -47,14 +47,6 @@ class SysNode :
             return('ERREUR : pas assez de place dans la donnée')
 
 
-
-'''class Arcs :
-
-    def __init__(self, id, time) :
-        self.id = id
-        self.time = time'''
-
-
 class System :
 
     def __init__(self, L_nodes, L_users, L_data) :
@@ -63,89 +55,11 @@ class System :
         self.data = L_data
 
 
-    '''def placedata(self, user) :
-        if not user in self.users :             #check d'utilisateur valide
-            return("Cet utilisateur ne fait pas partie du système.")
-        for n in self.nodes :
-            if n.id == user.usernodeID :            #récupération du node lié à l'utilisateur
-                usernode = n
-        nodesreft, times = self.alltimesfrom(usernode)
-        for d in user.userdata :
-            result = self.subplacedata(d, nodesreft, times)
-            if type(result) == str :
-                return(result)
-        return('Terminé.')'''
-
-    '''else :
-            for n in self.nodes :
-                if n.id == user.usernodeID :
-                    usernode = n
-            for n in self.nodes :               #check de données déjà placées
-                for d in user.userdata :
-                    for l in n.localdata :
-                        #print('checkdata', d, n.localdata)
-                        if d.id == l.id :
-                            return("Les données sont déjà placées.")
-            dataToPlace = copy.deepcopy(user.userdata)
-            nodesreft, times = self.alltimesfrom(usernode)
-            #times.append(0)
-            #nodesreft.append(usernode)
-            timesReset = copy.deepcopy(times)               #sauvegarde des listes entières
-            nodesreftReset = copy.deepcopy(nodesreft)
-            while times != [] and dataToPlace != [] :           #tant qu'il reste des noeuds à vérifier ou des données à placer
-                print(times, dataToPlace)
-                for i in range(len(times)) :
-                    if times[i] == min(times) :
-                        minInd = i              #indice du noeud à vérifier
-                times.pop(minInd)
-                currentnode = nodesreft.pop(minInd)
-                if currentnode.availableMemSize() >= dataToPlace[0].size :
-                    print('va placer, ', currentnode.localdata)
-                    dataPlaced = dataToPlace.pop(0)
-                    currentnode.addData(dataPlaced)
-                    print('placé', dataPlaced, currentnode.id, currentnode.localdata)
-                    times = copy.deepcopy(timesReset)               #réinitialisation des parcours pour chaque nouvelle donnée
-                    nodesreft = copy.deepcopy(nodesreftReset)
-            if times == [] and dataToPlace != [] :
-                return('Pas assez de place.')
-            else :
-                return('Terminé.')'''
-
-    '''def subplacedata(self, Edata, nodesreft, times) :
-        for n in self.nodes :
-            for l in n.localdata :          #check de données déjà placées
-                if Edata.id == l.id :
-                    return("Les données sont déjà placées.")
-            while times != [] :           #tant qu'il reste des noeuds à vérifier
-                print(times)
-                for i in range(len(times)) :
-                    if times[i] == min(times) :
-                        minInd = i              #indice du noeud à vérifier
-                times.pop(minInd)
-                currentnode = nodesreft.pop(minInd)
-                if currentnode.availableMemSize() >= Edata.size :
-                    print('va placer, ', currentnode.localdata)
-                    currentnode.addData(Edata)
-                    print('placé', Edata.id, currentnode.id, currentnode.localdata)
-                    return(True)
-            if times == [] :
-                return('Pas assez de place.')       #communique "Pas assez de place".'''
-
-
     def placedataworksonce(self, user) :
         print('placedataworksonce called')
-        #if not user in self.users :             #check d'utilisateur valide
-            #return("Cet utilisateur ne fait pas partie du système.")
-        #else :
         for n in self.nodes :
             if n.id == user.usernodeID :
                 usernode = n
-        '''for n in self.nodes :               #check de données déjà placées
-            for d in user.userdata :
-                for l in n.localdata :
-                    #print('checkdata', d, n.localdata)
-                    if d.id == l.id :
-                        return("Les données sont déjà placées.")'''
         dataToPlace = copy.deepcopy(user.userdata)
         nodesreft, times = self.alltimesfrom(usernode)
         times.append(0)
@@ -166,10 +80,7 @@ class System :
                 print('placé', dataPlaced, currentnode.id, currentnode.localdata)
                 times = copy.deepcopy(timesReset)               #réinitialisation des parcours pour chaque nouvelle donnée
                 nodesreft = copy.deepcopy(nodesreftReset)
-        '''if times == [] and dataToPlace != [] :
-            return('Pas assez de place.')
-        else :
-            return('Terminé.')'''
+
 
     def placedatascotch(self, user) :
         if not user in self.users :             #check d'utilisateur valide
@@ -198,13 +109,15 @@ class System :
                     currentnode = nodesreft.pop(minInd)
                     if currentnode.availableMemSize() >= d.size :
                         scotchuser = User(100, [d], currentnode.id)
-                        #self.addUser(scotchuser)
                         self.placedataworksonce(scotchuser)
-                        #self.removeUser(scotchuser)
                         times = []                      #fin boucle while
                         print('placé', d.id, currentnode.id)
         return('Terminé fr.')
-
+#La méthode "placedataworksonce" ne marchait qu'une fois. Si un utilisateur avait plus d'une donnée à placer, seule la première était bien placée. La deuxième semblait fonctionner aussi, mais le système ne s'en souvenait pas.
+#cette méthode simule donc un utilisateur pour chaque donnée à placer, afin d'éviter les problèmes.
+#Cela a marché dans 60% des cas, mais si l'on veut placer les données du User1, par exemple, seule la premiere donnée sera bien placée, malrgé les messages de confirmation.
+#Alors que si la donnée du User0 est déjà placée, les données du User1 seront placées correctement.
+#Tandis que le User2 place ses données correctement dès le départ, mais ne fonctionne plus correctement si une donnée est déjà présente...
 
     def placedataQ3(self, user1, user2) :
         if not user1 in self.users :             #check d'utilisateurs valides
@@ -274,16 +187,11 @@ class System :
                     scotchuser = User(100, [dataPlaced], currentnodes[placeInd].id)
                     self.placedataworksonce(scotchuser)
                 currentnodes.pop(placeInd)
+#Pour tester cette fonction, j'ai défini les utilisateurs UserC1, UserC2, UserC3 et UserC4 qui ont des données en commun.
 
 
     def placedataQ4(user) :
         pass
-
-    def addUser(self, user) :
-        self.users.append(user)
-
-    def removeUser(self, user) :
-        self.users.remove(user)
 
 
     def cleardata(self) :
@@ -303,10 +211,7 @@ class System :
             for j in range(len(allnodes)) :
                 if node.reachablenodes[i] == allnodes[j].id :
                     alltimes[j] = node.times[i]     #ajout des temps de tous les noeuds atteignables de base
-        #currentnode = node
-        #timefromstart = 0
         process = True
-        #choosenewnode = True
         for sysnode in allnodes :
             currentnode = sysnode
             for i in range(len(allnodes)) :                #recherche du timefromstart
@@ -371,20 +276,11 @@ class System :
                 for i in range(len(currentnode.reachablenodes)) :
                     for j in range(len(allnodes)) :
                         if currentnode.reachablenodes[i] == allnodes[j].id and (alltimes[j] == 0 or alltimes[j] >  timefromstart + currentnode.times[i]) :
-                            #print(timefromstart, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+                            #print(timefromstart)
                             alltimes[j] = timefromstart + currentnode.times[i]      #ajout du temps mesuré
                             #print('CHANGEMENT : NOUVEAU TEMPS')
                 #print('Fin boucle donnée')
-            '''for i in range(len(allnodes)) :
-                for j in range(len(node.reachablenodes)) :
-                    print(allnodes[i].id, node.reachablenodes[j], ' | ', alltimes[i], node.times[j])
-                    if allnodes[i].id == node.reachablenodes[j] and alltimes[i] > node.times[j] :   #vérification qu'il n'y a pas de temps absurde
-                        currentnode = allnodes[i]
-                        timefromstart = node.times[j]
-                        choosenewnode = False   #permet de passer la partie d'assignation dans le prochain passage de la boucle while
-                        print('fin main boucle AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
-                    else : process = False'''      #si aucune erreur n'est détectée, la boucle s'arrête.
-            #print('Fin boucle principale AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+            #print('Fin boucle principale')
         for i in range(len(allnodes)) :          #suppression du noeud en entrée
             #print(allnodes[i].id, node.id)
             if allnodes[i].id == node.id :
@@ -392,8 +288,6 @@ class System :
         #allnodes.pop(node_ind)
         alltimes[node_ind] = 0
         return(allnodes, alltimes)
-#CA MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARCHE OUIIIIIIIIIIIIIIIII
-
 
 
     def displaystate(self) :
@@ -404,7 +298,7 @@ class System :
             print('Node with id ' + str(i.id) + ' stores data with the following ids : ', dataids)
 
 
-    def alltimesfromhumantest(self, node) :
+    def alltimesfromhumantest(self, node) :     #☻méthode qui affiche les résultats de alltimesfrom(node) avec les IDs des noeuds, afin de vérifier si la méthode a bien fonctionné.
         nodes, times = self.alltimesfrom(node)
         for i in range(len(nodes)) :
             nodes[i] = nodes[i].id
