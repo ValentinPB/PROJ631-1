@@ -276,6 +276,9 @@ class System :
                 currentnodes.pop(placeInd)
 
 
+    def placedataQ4(user) :
+        pass
+
     def addUser(self, user) :
         self.users.append(user)
 
